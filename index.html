@@ -45,8 +45,7 @@
 <script>
 
   // SANTA MAP:
-  let santa = '{"users":["Paul","Marie","Evert","Duncan","Rob","Janie","Louis"],"data":[{"name":"U2FsdGVkX19ojOk7oDCribMhm26PCtI6JHkGzcB2u+c=","target":"U2FsdGVkX1/ZbVV7BUZoe9ynaOnwLYA5DBTtJceZO64="},{"name":"U2FsdGVkX19oeFXpJyO7CP33660xCk1WrCFeNDrgDvE=","target":"U2FsdGVkX1/ZddeGNRohxeotXI8MxS3Jk2r/kVNvHJQ="},{"name":"U2FsdGVkX1+liLo+207akb8w+xpDveWZzmSjooe9LPk=","target":"U2FsdGVkX19Uvj131At7zkKtFjvBYsTy1bIoi56P5+A="},{"name":"U2FsdGVkX19Llm12nTH5jvTgxazXa/28VCFwuIZ2gq8=","target":"U2FsdGVkX1+JDeMDOLmizhx/nRp4q0r/8oOmxXo2vgw="},{"name":"U2FsdGVkX18w7fVKb+N0Ggdgjf5V4iNxijAZdqBoBSI=","target":"U2FsdGVkX195+c331oYY9SsgPpUraj6vNa1FPeWaj5c="},{"name":"U2FsdGVkX19gxKecDArJ6LEb//44tBar953HirtgxD8=","target":"U2FsdGVkX1+6440Dw/L2Q4JECFbrfKF/yqFDvmOrvaU="},{"name":"U2FsdGVkX1+J1/pppxbMbr5RqccMP+xro3MxnyRd1iw=","target":"U2FsdGVkX19wlJvKktHZygfwuoBp1UJpc/mG2+0NEpE="}]}';
-
+  let santa = '{"users":["Paul","Marie","Evert","Duncan","Rob","Janie","Louis"],"data":[{"name":"U2FsdGVkX1/VVVHUoLdTG7iKJ/DJ15BWVjmGyVaMO/Y=","target":"U2FsdGVkX1+lLvbjsOd2wi048RE/6oHrjpXDTu4s3EI="},{"name":"U2FsdGVkX199yNDrbU86NMdOOi2NOjGoMef9VjxDhFY=","target":"U2FsdGVkX1914atv48a/UAd0W0aOlwYOYuOYBnY7YTU="},{"name":"U2FsdGVkX183uddzjJ9fHjfLbC/6yVKmYe6m99N+gJM=","target":"U2FsdGVkX1+NwvJNkiTYwoosFSudJZ6sePfbQ5WTQKY="},{"name":"U2FsdGVkX18sS0fc91vXncOtKVHi0zf5P/PJTqioRvE=","target":"U2FsdGVkX1+tKX0ci92Ogu7CbIZVrIk9y3w7gnVjPls="},{"name":"U2FsdGVkX194auGILKrH9HdQMO7k5yr07fzYKcnH7cM=","target":"U2FsdGVkX1/5U5jJz9qQbOz49bJrT/CZnPaOATq2Tgk="},{"name":"U2FsdGVkX19TrHlpSLPbuhuJ/S97mnh5fgIGj/AgSHo=","target":"U2FsdGVkX1+vwaJFS4KNH1fwI6fWPpP0v92RVJDlgdg="},{"name":"U2FsdGVkX1/7XtVAIGYK367axlhW5HqqSiaAI30fAIc=","target":"U2FsdGVkX19Doa9KsK2IVY7DQ2aFfLCv15Xvk+QJ7b4="}]}';
   let encryptedSantaMapCompound = JSON.parse(santa);
 
   console.log(encryptedSantaMapCompound.users);
@@ -78,7 +77,7 @@
     } else {
 
       let errorElement = document.getElementById("error");
-      errorElement.innerHTML = "Sorry, could not find your key!";
+      errorElement.innerHTML = "Invalid key!";
     }
   }
 

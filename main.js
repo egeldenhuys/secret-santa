@@ -32,7 +32,6 @@ function generateSantaMap(users, bias1, bias2) {
 
   // Fix the probabilities
   if (typeof bias1 !== 'undefined' && typeof bias2 !== 'undefined') {
-    console.log("Applying the bias");
 
     let srcIndex = findIndexOfString(srcUsers, bias1);
     let dstIndex = findIndexOfString(targetUsers, bias2);
@@ -48,11 +47,8 @@ function generateSantaMap(users, bias1, bias2) {
   }
 
   while (srcUsers.length > 0) {
-    console.log("Picking user...");
     // Pick a random source user and remove
     let rndSrcIndex = Math.floor((Math.random() * srcUsers.length) + 0);
-    console.log(rndSrcIndex);
-    console.log(srcUsers.length);
     let name = srcUsers[rndSrcIndex];
 
 
@@ -69,7 +65,7 @@ function generateSantaMap(users, bias1, bias2) {
       santaMap.push(tuple);
     } else {
       if (targetUsers.length == 1) {
-        console.error("It broke!");
+        console.error("It broke! Better retry!");
         return undefined;
       }
     }
