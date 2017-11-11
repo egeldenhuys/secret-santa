@@ -1,0 +1,63 @@
+ <meta charset="UTF-8">
+<html>
+  <head>
+    <title>Secret Santa generator page</title>
+  </head>
+  <body>
+
+    <p id="loading">Loading...</p>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <script src="main.js"></script>
+
+    <script>
+      document.getElementById("loading").innerHTML = "";
+    </script>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-2">
+          <div>
+            <p>Names (1 per line)</p>
+            <textarea name="names" cols="20" rows="10" id="users"></textarea>
+            <button id="generate" onclick="generate()" >Generate</button>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div>
+            <p>Keys</p>
+            <textarea name="names" cols="30" rows="10" id="keys"></textarea>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div>
+            <p>encryptedSantaMapCompound</p>
+            <textarea name="names" cols="60" rows="10" id="santa"></textarea>
+          </div>
+        </div>
+
+    </div>
+  </div>
+
+  <script>
+
+  function generate() {
+    let users = document.getElementById("users").value;
+    users = users.split("\n");
+    console.log(users);
+
+    let clearSantaMap = generateSantaMap(users);
+    let keys = generateSecretKeyMap(users);
+    document.getElementById("keys").value = JSON.stringify(keys);
+    let encSantaMap = encryptSantaMap(clearSantaMap, keys);
+    document.getElementById("santa").value = JSON.stringify(encSantaMap);
+
+  }
+
+  </script>
+  </body>
+
+</html>

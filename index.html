@@ -1,0 +1,83 @@
+<meta charset="UTF-8">
+<html>
+ <head>
+   <title>Secret Santa generator page</title>
+   <link rel="stylesheet" type="text/css" href="style.css">
+ </head>
+ <body>
+
+   <p id="loading">Loading...</p>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+   <script src="main.js"></script>
+   <script>
+     document.getElementById("loading").innerHTML = "";
+   </script>
+
+   <div class="container">
+     <div class="row">
+       <div class = "col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
+         <div id="welcome">
+           <label>
+             <p class="large">Enter Your key</p>
+             <input type="text" id="key"/>
+           </label>
+            <button id="btnSubmit">Submit</button>
+            <p class="err" id="error"></p>
+         </div>
+
+         <div id="goodKey">
+           <p id="name" class="large"></p>
+           <p id="target" class="large"></p>
+         </div>
+
+       </div>
+     </div>
+   </div>
+
+ </body>
+
+
+<script>
+
+  // SANTA MAP:
+  let santa = '{"users":["John","Fred","Butter","Sally","Walter","Jek","Fek"],"data":[{"name":"U2FsdGVkX1/MPnQgIjpRyI+Q1RbKUhP7AhEhFrFfqw8=","target":"U2FsdGVkX19JDP0cE2bBsxQ/tCDvU0Jj29ip1hI9fos="},{"name":"U2FsdGVkX19cCgoeIgAqHkA8NRwv+axx0WdetI2GzbM=","target":"U2FsdGVkX1/DiX0JnGwAfHvfKfWzyp1KAw+X2QTFsPY="},{"name":"U2FsdGVkX19bHLio/d04n4kMEXzAZilUIjJp0JFdsWI=","target":"U2FsdGVkX19QEwCc3sXkDZRuzv4vOlMrHEcS2E05wDU="},{"name":"U2FsdGVkX1//4auqGBXCjIS7cGm+K+LsIZioGLID2pk=","target":"U2FsdGVkX18uaGdm8GNzK9VQV2yRlhWoM6DcW7j03kk="},{"name":"U2FsdGVkX19rL8KRAeTNrQP7SCuwt6HBEVIwbpAwqrY=","target":"U2FsdGVkX19keb6Su0k/HIb7I5ESf49i6Xd6ubXcHZo="},{"name":"U2FsdGVkX19/VtEINYPLnS048kqh9TXD/NovzRvrBvQ=","target":"U2FsdGVkX18xQTf0ztDJXLG2phIwjNF670Mp2cnbuzM="},{"name":"U2FsdGVkX1+mMWMvJHQzmvkwzDAEnxlb6XcY+pz9Tkc=","target":"U2FsdGVkX1830gFpWWzl33uHG4e7eVPkg7uoGOLxCtU="}]}';
+
+  let encryptedSantaMapCompound = JSON.parse(santa);
+
+  console.log(encryptedSantaMapCompound.users);
+
+  let btnSubmit = document.getElementById("btnSubmit");
+  btnSubmit.addEventListener("click", decrypt);
+
+  function decrypt()
+  {
+    let key = document.getElementById("key").value;
+    let data = decryptSantaMap(encryptedSantaMapCompound, key);
+
+    if (data != null) {
+      let welcome = document.getElementById("welcome");
+      welcome.style.display = "none";
+
+      let d = document.getElementById("goodKey");
+      d.style.display = "block"
+      let u = document.getElementById("name");
+      let t = document.getElementById("target");
+
+      u.innerHTML = "Hi " + data.name + ", <br /> your target is <b>" + data.target + "</b>";
+      //t.innerHTML = "Your target is: " + data.target;
+
+    } else if (data == -1){
+      let errorElement = document.getElementById("error");
+      errorElement.innerHTML = "The admin messed up. Notify the admin!";
+
+    } else {
+
+      let errorElement = document.getElementById("error");
+      errorElement.innerHTML = "Sorry, could not find your key!";
+    }
+  }
+
+</script>
+</html>

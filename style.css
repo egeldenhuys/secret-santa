@@ -1,0 +1,17 @@
+body{
+  /*background-color: black;*/
+  background-image: url("bg.jpe");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+p.large{
+  margin-top: 20px;
+  font-size: 200%;
+}
+
+p.err{
+  margin-top: 20px;
+  font-size: 150%;
+  color: red;
+}
