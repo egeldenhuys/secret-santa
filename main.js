@@ -1,3 +1,14 @@
+
+function findIndexOfString(arr, str) {
+
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i].localeCompare(str) == 0) {
+      return i;
+    }
+  }
+
+  return -1;
+}
 // Returns a santaMap
 /*
 {
@@ -14,69 +25,54 @@ function generateSantaMap(users, bias1, bias2) {
 
   // Create Copy of array
   let userArray = users.slice();
+  let srcUsers = users.slice();
+  let targetUsers = users.slice();
 
-  let queue = [];
   let santaMap = [];
 
-  // Create random queue from the given user array
-  while (userArray.length > 0) {
-    let rndIndex = Math.floor((Math.random() * userArray.length) + 0);
-    queue.push(userArray[rndIndex])
-
-    // remove name from users array
-    userArray.splice(rndIndex, 1);
-  }
-
-  // Make the queue biased
-  // bias1 will be at front
-  // bias2 will be after bias1
-  // Thus bias1 will always get bias2 as a target
-  let foundCounter = 0;
-
+  // Fix the probabilities
   if (typeof bias1 !== 'undefined' && typeof bias2 !== 'undefined') {
-    // Remove bias1 and bias2 from the queue
-      for (let i = 0; i < queue.length; i++) {
-        if (queue[i].localeCompare(bias1) == 0) {
-          queue.splice(i, 1);
-          foundCounter++;
-          break;
-        }
-      }
+    console.log("Applying the bias");
 
-    // Remove bias2
-      for (let i = 0; i < queue.length; i++) {
-        if (queue[i].localeCompare(bias2) == 0) {
-          queue.splice(i, 1);
-          foundCounter++
-          break;
-        }
-      }
+    let srcIndex = findIndexOfString(srcUsers, bias1);
+    let dstIndex = findIndexOfString(targetUsers, bias2);
 
-    if (foundCounter != 2) {
-      console.error("Bias does not exist in user array!");
-      return undefined;
-    }
-    // Ass bias1 and 2 to the back
-    queue.push(bias1);
-    queue.push(bias2);
+    let name = srcUsers[srcIndex];
+    srcUsers.splice(srcIndex, 1);
 
-    // Rotate the queue n - 2 times right
-    for (let i = 0; i < queue.length - 2; i++) {
-      let tmp = queue.shift();
-      queue.push(tmp);
-    }
+    let target = targetUsers[dstIndex];
+    targetUsers.splice(dstIndex, 1);
+
+    let tuple = {name: name, target: target};
+    santaMap.push(tuple);
   }
 
-  // Use the queue for the santa map
-  for (let i = 0; i < queue.length; i++) {
-    // Rotate array left, and record who was at front
-    let name = queue.shift();
-    queue.push(name);
+  while (srcUsers.length > 0) {
+    console.log("Picking user...");
+    // Pick a random source user and remove
+    let rndSrcIndex = Math.floor((Math.random() * srcUsers.length) + 0);
+    console.log(rndSrcIndex);
+    console.log(srcUsers.length);
+    let name = srcUsers[rndSrcIndex];
 
-    let target = queue[0];
-    let tuple = {name: name, target: target};
 
-    santaMap.push(tuple);
+    // Pick a random destination user
+    let rndDstIndex = Math.floor((Math.random() * targetUsers.length) + 0);
+    let target = targetUsers[rndDstIndex];
+
+    // Bad tuple
+    if (name.localeCompare(target) != 0) {
+      targetUsers.splice(rndDstIndex, 1);
+      srcUsers.splice(rndSrcIndex, 1);
+
+      let tuple = {name: name, target: target};
+      santaMap.push(tuple);
+    } else {
+      if (targetUsers.length == 1) {
+        console.error("It broke!");
+        return undefined;
+      }
+    }
   }
 
   let santaCompound = {users: users, data: santaMap};

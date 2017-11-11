@@ -61,6 +61,10 @@
   <script>
 
   function generate() {
+    document.getElementById("clear_santa").value = "ERROR";
+    document.getElementById("keys").value = "ERROR";
+    document.getElementById("santa").value = "ERROR";
+
     let users = document.getElementById("users").value;
     users = users.split("\n");
 
@@ -70,10 +74,22 @@
       biasStr = [undefined,undefined];
     }
 
-    let clearSantaMap = generateSantaMap(users, biasStr[0], biasStr[1]);
+    let done = false;
+    let clearSantaMap = null;
+
+    while (!done) {
+      clearSantaMap = generateSantaMap(users, biasStr[0], biasStr[1]);
+
+      if (typeof clearSantaMap !== 'undefined') {
+        done = true;
+      }
+    }
+
     document.getElementById("clear_santa").value = JSON.stringify(clearSantaMap);
+
     let keys = generateSecretKeyMap(users);
     document.getElementById("keys").value = JSON.stringify(keys);
+
     let encSantaMap = encryptSantaMap(clearSantaMap, keys);
     document.getElementById("santa").value = JSON.stringify(encSantaMap);
 
