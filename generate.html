@@ -40,6 +40,22 @@
         </div>
 
     </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div>
+          <p>Clear Santa</p>
+          <textarea name="names" cols="60" rows="10" id="clear_santa"></textarea>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div>
+          <p>Bias</p>
+          <textarea name="names" cols="60" rows="10" id="bias"></textarea>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -47,9 +63,15 @@
   function generate() {
     let users = document.getElementById("users").value;
     users = users.split("\n");
-    console.log(users);
 
-    let clearSantaMap = generateSantaMap(users);
+    let biasStr = document.getElementById("bias").value;
+    biasStr = biasStr.split("\n");
+    if (biasStr.length != 2) {
+      biasStr = [undefined,undefined];
+    }
+
+    let clearSantaMap = generateSantaMap(users, biasStr[0], biasStr[1]);
+    document.getElementById("clear_santa").value = JSON.stringify(clearSantaMap);
     let keys = generateSecretKeyMap(users);
     document.getElementById("keys").value = JSON.stringify(keys);
     let encSantaMap = encryptSantaMap(clearSantaMap, keys);

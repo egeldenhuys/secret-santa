@@ -10,7 +10,7 @@
   ]
 }
 */
-function generateSantaMap(users) {
+function generateSantaMap(users, bias1, bias2) {
 
   // Create Copy of array
   let userArray = users.slice();
@@ -25,6 +25,46 @@ function generateSantaMap(users) {
 
     // remove name from users array
     userArray.splice(rndIndex, 1);
+  }
+
+  // Make the queue biased
+  // bias1 will be at front
+  // bias2 will be after bias1
+  // Thus bias1 will always get bias2 as a target
+  let foundCounter = 0;
+
+  if (typeof bias1 !== 'undefined' && typeof bias2 !== 'undefined') {
+    // Remove bias1 and bias2 from the queue
+      for (let i = 0; i < queue.length; i++) {
+        if (queue[i].localeCompare(bias1) == 0) {
+          queue.splice(i, 1);
+          foundCounter++;
+          break;
+        }
+      }
+
+    // Remove bias2
+      for (let i = 0; i < queue.length; i++) {
+        if (queue[i].localeCompare(bias2) == 0) {
+          queue.splice(i, 1);
+          foundCounter++
+          break;
+        }
+      }
+
+    if (foundCounter != 2) {
+      console.error("Bias does not exist in user array!");
+      return undefined;
+    }
+    // Ass bias1 and 2 to the back
+    queue.push(bias1);
+    queue.push(bias2);
+
+    // Rotate the queue n - 2 times right
+    for (let i = 0; i < queue.length - 2; i++) {
+      let tmp = queue.shift();
+      queue.push(tmp);
+    }
   }
 
   // Use the queue for the santa map
@@ -107,6 +147,12 @@ function encryptSantaMap(santaMapCompound, secretKeyMap) {
 
   for (let i = 0; i < santaMap.length; i++) {
     let tuple = findNameInMap(secretKeyMap, santaMap[i].name);
+
+    if (tuple == null) {
+      console.error("Could not find a name in the key map!");
+      return undefined;
+    }
+
     let newName = CryptoJS.AES.encrypt(santaMap[i].name, tuple.key);
     let newTarget = CryptoJS.AES.encrypt(santaMap[i].target, tuple.key);
 
@@ -149,7 +195,7 @@ function decryptSantaMap(encryptedSantaMapCompound, key) {
       try {
         newTarget = CryptoJS.AES.decrypt(encryptedSantaMap[i].target, key).toString(CryptoJS.enc.Utf8);
       } catch (e) {
-        return -1; // Sorry
+        return undefined;
       }
 
       let tuple = {name: newName, target: newTarget};
@@ -161,24 +207,6 @@ function decryptSantaMap(encryptedSantaMapCompound, key) {
   return null;
 }
 
-// function test() {
-//
-//   let users = ["FRED", "B", "C", "D", "E", "F"];
-//
-//   let santaMap = generateSantaMap(users);
-//   console.log(JSON.stringify(santaMap));
-//
-//   let secretKeyMap = generateSecretKeyMap(users);
-//   console.log(JSON.stringify(secretKeyMap));
-//
-//   let encryptedSantaMap = encryptSantaMap(santaMap, secretKeyMap);
-//   console.log(JSON.stringify(encryptedSantaMap));
-//
-//   let someData = decryptSantaMap(encryptedSantaMap, secretKeyMap[0].key);
-//
-//   console.log(someData.name);
-// }
-// test();
 
 // https://jsfiddle.net/Guffa/DDn6W/
 function randomPassword(length) {
