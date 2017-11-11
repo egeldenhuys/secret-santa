@@ -116,6 +116,24 @@ function findNameInMap(map, name) {
       return map[i];
     }
   }
+  return null;
+}
+
+function findTargetInMap(map, target) {
+
+  for (let i = 0; i < map.length; i++) {
+
+    if (typeof map[i].target === 'undefined') {
+      console.error("findTargetInMap: typeof map[i].target === 'undefined'");
+      console.error(map);
+      console.error(target);
+      return null;
+    }
+
+    if (map[i].target.localeCompare(target) == 0) {
+      return map[i];
+    }
+  }
 
   return null;
 }
@@ -152,8 +170,8 @@ function encryptSantaMap(santaMapCompound, secretKeyMap) {
     newSantaMap.push(newTuple);
   }
 
-  santaMapCompound.data = newSantaMap;
-  return santaMapCompound;
+  let newSantaMapCompound = {users: santaMapCompound.users.slice(), data: newSantaMap};
+  return newSantaMapCompound;
 }
 
 function isStringInArray(arr, str) {
@@ -199,6 +217,123 @@ function decryptSantaMap(encryptedSantaMapCompound, key) {
   return null;
 }
 
+function runTestsOnSantaMapCompound(santaMapCompound, secretSantaMapCompound, keyMap, bias1, bias2) {
+  let users = santaMapCompound.users;
+  let data = santaMapCompound.data;
+
+  let requiredUsers = ["Paul", "Marie", "Rob", "Evert", "Janie", "Louis", "Duncan"];
+
+  if (users.length != requiredUsers.length) {
+    console.error("users.length != requiredUsers.length");
+    return false;
+  }
+
+  // Check that all users are in the map list and the data list
+  for (let i = 0; i < users.length; i++) {
+    for (let j = 0; j < requiredUsers.length; j++) {
+      if (findIndexOfString(users, requiredUsers[j]) == -1) {
+        console.error("Could not find user from requiredUsers in santaMapCompound.users!");
+        console.error(requiredUsers[j]);
+        return false;
+      }
+
+      if (findNameInMap(santaMapCompound.data, requiredUsers[j]) == null) {
+        console.error("Could not find user from requiredUsers in santaMapCompound.data!");
+        console.error(requiredUsers[j]);
+        return false;
+      }
+
+      if (findTargetInMap(santaMapCompound.data, requiredUsers[j]) == null) {
+        console.error("Could not find target from requiredUsers in santaMapCompound.data!");
+        console.error(requiredUsers[j]);
+        return false;
+      }
+    }
+  }
+
+  // Make sure x -> x does not exist
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].name.localeCompare(data[i].target) == 0) {
+      console.error("A user has itself as the target!");
+      return false;
+    }
+  }
+
+  // Count cycles
+  let cycles = 0;
+  for (let i = 0; i < data.length; i++) {
+    let name = data[i].name;
+    let target = data[i].target;
+
+    let targetTuple = findNameInMap(santaMapCompound.data, target);
+    let targetTarget = targetTuple.target;
+
+
+    if (name.localeCompare(targetTarget) == 0) {
+      cycles++;
+    }
+  }
+
+  if (cycles > 0) {
+    console.warn("Detected " + cycles + " cycles!");
+  }
+
+  // Try to decrypt all the data
+  for (let i = 0; i < keyMap.length; i++) {
+    let name = keyMap[i].name;
+    let key = keyMap[i].key;
+    let target = findNameInMap(santaMapCompound.data, name).target;
+
+    let tuple = decryptSantaMap(secretSantaMapCompound, key);
+
+    if (typeof tuple === null || typeof tuple === undefined) {
+      console.error("Unable to decrypt santa map!");
+      return false;
+    }
+
+    if (tuple.name != name) {
+      console.error("Wrong name in encrypted tuple!");
+      return false;
+    }
+
+    if (tuple.target != target) {
+      console.error("Wrong target in encrypted tuple!");
+      return false;
+    }
+  }
+
+
+  // Test invalid user
+
+  if (findNameInMap(santaMapCompound.data, "L33T_HAX0R") != null) {
+    console.error("Found a tuple given an invalid name");
+    return false;
+  }
+
+  if (findTargetInMap(santaMapCompound.data, "L33T_HAX0R") != null) {
+    console.error("Found a tuple given an invalid name");
+    return false;
+  }
+
+  if (decryptSantaMap(secretSantaMapCompound, "L33T_HAX0R") != null) {
+    console.error("Decrypted given an invalid key");
+    return false;
+  }
+
+  // Test bias
+  if (typeof bias1 !== 'undefined' && typeof bias2 !== 'undefined') {
+    let bias1Tuple = findNameInMap(santaMapCompound.data, bias1);
+    let bias2Tuple = findNameInMap(santaMapCompound.data, bias2);
+
+    if (bias1Tuple.target.localeCompare(bias2Tuple.name) != 0) {
+      console.error("Bias did not take effect!");
+      return false;
+    }
+  }
+
+  return true;
+
+}
 
 // https://jsfiddle.net/Guffa/DDn6W/
 function randomPassword(length) {

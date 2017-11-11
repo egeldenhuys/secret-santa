@@ -95,6 +95,11 @@
     let encSantaMap = encryptSantaMap(clearSantaMap, keys);
     document.getElementById("santa").value = JSON.stringify(encSantaMap);
 
+    let tests = runTestsOnSantaMapCompound(clearSantaMap, encSantaMap, keys, biasStr[0], biasStr[1]);
+    if (!tests) {
+      document.getElementById("santa").value = "Tests failed! See console!";
+    }
+
   }
 
   </script>
