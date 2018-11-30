@@ -56,6 +56,15 @@ function generateSantaMap(users, bias1, bias2) {
     let rndDstIndex = Math.floor((Math.random() * targetUsers.length) + 0);
     let target = targetUsers[rndDstIndex];
 
+    // Pick fresh people
+    let oldTuples = ["Louis-Rob", "Paul-Louis", "Janie-Evert", "Evert-Paul", "Rob-Duncan", "Duncan-Marie", "Marie-Janie"];
+
+    let squashThis = name + "-" + target;
+    if (oldTuples.includes(squashThis)) {
+      console.log("Bad tupple!");
+      return undefined;
+    }
+
     // Bad tuple
     if (name.localeCompare(target) != 0) {
       targetUsers.splice(rndDstIndex, 1);
@@ -70,6 +79,8 @@ function generateSantaMap(users, bias1, bias2) {
       }
     }
   }
+
+
 
   let santaCompound = {users: users, data: santaMap};
   return santaCompound;
