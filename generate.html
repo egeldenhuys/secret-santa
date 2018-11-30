@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Secret Santa generator page</title>
+    <link rel="stylesheet" type="text/css" href="generate.css">
   </head>
   <body>
 
@@ -56,9 +57,66 @@
         </div>
       </div>
     </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div>
+          <p>Analysis</p>
+          <textarea name="names" cols="60" rows="10" id="analysis"></textarea>
+        </div>
+        <button id="btnAnalyse" onclick="analyse()" >Analyse</button>
+        <p id="counter">0</p>
+      </div>
+      
+
   </div>
 
   <script>
+
+  // Run generate 1000 times and record results
+  function analyse() {
+    let users = document.getElementById("users").value;
+    users = users.split("\n");
+
+    let biasStr = document.getElementById("bias").value;
+    biasStr = biasStr.split("\n");
+    if (biasStr.length != 2) {
+      biasStr = [undefined,undefined];
+    }
+    
+    let santaMaps = [];
+    let countMap = {};
+
+    for (let i = 0; i < 100000; i++) {
+      document.getElementById("counter").innerText = i;
+
+      let clearSantaMap = undefined;
+      while (!clearSantaMap) {
+        clearSantaMap = generateSantaMap(users, biasStr[0], biasStr[1]);
+      }
+
+      let tests = runTestsOnSantaMapCompound(users, clearSantaMap, undefined, keys, biasStr[0], biasStr[1]);
+      if (!tests) {
+        document.getElementById("santa").value = "Tests failed! See console!";
+        alert("Something went wrong...");
+        return -1;
+      } else {
+        for (let nameTuple of clearSantaMap.data) {
+          key = nameTuple["name"] + "->" + nameTuple["target"]
+
+          if (key in countMap) {
+            countMap[key] = countMap[key] + 1
+          } else {
+            countMap[key] = 0;
+          }
+        }
+       
+        santaMaps.push(clearSantaMap);
+      }
+    }
+
+    document.getElementById("analysis").value = JSON.stringify(countMap);
+  }
 
   function generate() {
     document.getElementById("clear_santa").value = "HIDDEN";
@@ -87,7 +145,7 @@
       }
     }
 
-    //document.getElementById("clear_santa").value = JSON.stringify(clearSantaMap);
+    // document.getElementById("clear_santa").value = JSON.stringify(clearSantaMap);
 
     let keys = generateSecretKeyMap(users);
     document.getElementById("keys").value = JSON.stringify(keys);
@@ -95,7 +153,7 @@
     let encSantaMap = encryptSantaMap(clearSantaMap, keys);
     document.getElementById("santa").value = JSON.stringify(encSantaMap);
 
-    let tests = runTestsOnSantaMapCompound(clearSantaMap, encSantaMap, keys, biasStr[0], biasStr[1]);
+    let tests = runTestsOnSantaMapCompound(users, clearSantaMap, encSantaMap, keys, biasStr[0], biasStr[1]);
     if (!tests) {
       document.getElementById("santa").value = "Tests failed! See console!";
     }

@@ -65,7 +65,7 @@ function generateSantaMap(users, bias1, bias2) {
       santaMap.push(tuple);
     } else {
       if (targetUsers.length == 1) {
-        console.error("It broke! Better retry!");
+        // console.error("It broke! Better retry!");
         return undefined;
       }
     }
@@ -217,11 +217,11 @@ function decryptSantaMap(encryptedSantaMapCompound, key) {
   return null;
 }
 
-function runTestsOnSantaMapCompound(santaMapCompound, secretSantaMapCompound, keyMap, bias1, bias2) {
+function runTestsOnSantaMapCompound(requiredUsers, santaMapCompound, secretSantaMapCompound, keyMap, bias1, bias2) {
   let users = santaMapCompound.users;
   let data = santaMapCompound.data;
 
-  let requiredUsers = ["Paul", "Marie", "Rob", "Evert", "Janie", "Louis", "Duncan"];
+  // let requiredUsers = ["Hris", "Duncan", "Janie", "Louis", "Paul", "Rob", "Cayla", "Evert"];
 
   if (users.length != requiredUsers.length) {
     console.error("users.length != requiredUsers.length");
@@ -275,49 +275,51 @@ function runTestsOnSantaMapCompound(santaMapCompound, secretSantaMapCompound, ke
   }
 
   if (cycles > 0) {
-    console.warn("Detected " + cycles + " cycles!");
+    // console.warn("Detected " + cycles + " cycles!");
   }
 
   // Try to decrypt all the data
-  for (let i = 0; i < keyMap.length; i++) {
-    let name = keyMap[i].name;
-    let key = keyMap[i].key;
-    let target = findNameInMap(santaMapCompound.data, name).target;
+  if (secretSantaMapCompound) {
+    for (let i = 0; i < keyMap.length; i++) {
+      let name = keyMap[i].name;
+      let key = keyMap[i].key;
+      let target = findNameInMap(santaMapCompound.data, name).target;
 
-    let tuple = decryptSantaMap(secretSantaMapCompound, key);
+      let tuple = decryptSantaMap(secretSantaMapCompound, key);
 
-    if (typeof tuple === null || typeof tuple === undefined) {
-      console.error("Unable to decrypt santa map!");
+      if (typeof tuple === null || typeof tuple === undefined) {
+        console.error("Unable to decrypt santa map!");
+        return false;
+      }
+
+      if (tuple.name != name) {
+        console.error("Wrong name in encrypted tuple!");
+        return false;
+      }
+
+      if (tuple.target != target) {
+        console.error("Wrong target in encrypted tuple!");
+        return false;
+      }
+    }
+
+
+    // Test invalid user
+
+    if (findNameInMap(santaMapCompound.data, "L33T_HAX0R") != null) {
+      console.error("Found a tuple given an invalid name");
       return false;
     }
 
-    if (tuple.name != name) {
-      console.error("Wrong name in encrypted tuple!");
+    if (findTargetInMap(santaMapCompound.data, "L33T_HAX0R") != null) {
+      console.error("Found a tuple given an invalid name");
       return false;
     }
 
-    if (tuple.target != target) {
-      console.error("Wrong target in encrypted tuple!");
+    if (decryptSantaMap(secretSantaMapCompound, "L33T_HAX0R") != null) {
+      console.error("Decrypted given an invalid key");
       return false;
     }
-  }
-
-
-  // Test invalid user
-
-  if (findNameInMap(santaMapCompound.data, "L33T_HAX0R") != null) {
-    console.error("Found a tuple given an invalid name");
-    return false;
-  }
-
-  if (findTargetInMap(santaMapCompound.data, "L33T_HAX0R") != null) {
-    console.error("Found a tuple given an invalid name");
-    return false;
-  }
-
-  if (decryptSantaMap(secretSantaMapCompound, "L33T_HAX0R") != null) {
-    console.error("Decrypted given an invalid key");
-    return false;
   }
 
   // Test bias
